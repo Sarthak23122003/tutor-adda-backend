@@ -8,16 +8,20 @@ const {
   updateTutorProfile,
   getMyTutorProfile,
   getAllTutors,
-  searchTutors,
+  getSingleTutor,
   updateAvailability,
   addAvailability,
- 
 } = require("../controllers/tutorController");
-router.get("/", getAllTutors);
-// MIDDLEWARES
-const { protect } = require("../middleware/authMiddleware");
 
-const roleMiddleware = require("../middleware/roleMiddleware");
+// MIDDLEWARES
+const {
+  protect,
+} = require("../middleware/authMiddleware");
+
+const roleMiddleware = require(
+  "../middleware/roleMiddleware"
+);
+
 
 /**
  * @swagger
@@ -34,11 +38,6 @@ const roleMiddleware = require("../middleware/roleMiddleware");
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - subjects
- *               - bio
- *               - experience
- *               - hourlyRate
  *             properties:
  *               subjects:
  *                 type: array
@@ -50,30 +49,50 @@ const roleMiddleware = require("../middleware/roleMiddleware");
  *                 type: number
  *               hourlyRate:
  *                 type: number
+ *               city:
+ *                 type: string
  *               teachingMode:
  *                 type: string
- *                 example: online
+ *               languages:
+ *                 type: array
+ *                 items:
+ *                   type: string
  *     responses:
  *       201:
  *         description: Tutor profile created
  */
+
+
+// ======================================
+// PUBLIC ROUTES
+// ======================================
+
+// GET ALL TUTORS
+router.get("/", getAllTutors);
+
+// GET SINGLE TUTOR
+router.get("/:id", getSingleTutor);
+
+
+// ======================================
+// PRIVATE ROUTES
+// ======================================
+
 // CREATE TUTOR PROFILE
 router.post(
-  "/Profile",
+  "/profile",
   protect,
   roleMiddleware("tutor"),
   createTutorProfile
 );
 
-
 // UPDATE TUTOR PROFILE
 router.put(
-  "/update",
+  "/profile",
   protect,
   roleMiddleware("tutor"),
   updateTutorProfile
 );
-
 
 // GET MY PROFILE
 router.get(
@@ -83,25 +102,20 @@ router.get(
   getMyTutorProfile
 );
 
-
-// SEARCH TUTORS
-router.get("/search", searchTutors);
-
-
-// GET ALL TUTORS
-router.get("/", getAllTutors);
-
-// UPDATE TUTOR AVAILABILITY
-router.put(
-  "/availability",
-  protect,
-  roleMiddleware("tutor"),
-  updateAvailability
-);
+// ADD AVAILABILITY
 router.post(
   "/availability",
   protect,
   roleMiddleware("tutor"),
   addAvailability
 );
+
+// UPDATE AVAILABILITY
+router.put(
+  "/availability",
+  protect,
+  roleMiddleware("tutor"),
+  updateAvailability
+);
+
 module.exports = router;
