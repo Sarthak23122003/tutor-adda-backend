@@ -11,8 +11,9 @@ const {
   searchTutors,
   updateAvailability,
   addAvailability,
+  getAllTutors,
 } = require("../controllers/tutorController");
-
+router.get("/", getAllTutors);
 // MIDDLEWARES
 const { protect } = require("../middleware/authMiddleware");
 
