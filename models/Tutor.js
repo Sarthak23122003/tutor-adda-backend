@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
-const tutorSchema = new mongoose.Schema({
-
+const tutorSchema = new mongoose.Schema(
+{
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -12,7 +12,7 @@ const tutorSchema = new mongoose.Schema({
     {
       type: String,
       required: true,
-    }
+    },
   ],
 
   bio: {
@@ -35,18 +35,10 @@ const tutorSchema = new mongoose.Schema({
     default: "",
   },
 
-  teachingMode: {
-    type: String,
-    enum: ["online", "offline", "both"],
-    default: "online",
-  },
-
-  availability: [
+  languages: [
     {
-      day: String,
-      startTime: String,
-      endTime: String,
-    }
+      type: String,
+    },
   ],
 
   profileImage: {
@@ -54,10 +46,13 @@ const tutorSchema = new mongoose.Schema({
     default: "",
   },
 
-  // ======================================
-  // REVIEW FIELDS
-  // ======================================
-  averageRating: {
+  teachingMode: {
+    type: String,
+    enum: ["online", "offline", "both"],
+    default: "online",
+  },
+
+  rating: {
     type: Number,
     default: 0,
   },
@@ -65,12 +60,20 @@ const tutorSchema = new mongoose.Schema({
   totalReviews: {
     type: Number,
     default: 0,
-  }
+  },
 
+  availability: [
+    {
+      day: String,
+      startTime: String,
+      endTime: String,
+    },
+  ],
 },
 {
-  timestamps: true
-});
+  timestamps: true,
+}
+);
 
 module.exports = mongoose.model(
   "Tutor",
