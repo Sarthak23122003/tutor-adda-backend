@@ -21,11 +21,10 @@ const options = {
     },
 
     servers: [
-      {
-        url:
-          "http://localhost:3000",
-      },
-    ],
+  {
+    url: "https://tutor-adda-backend.onrender.com",
+  },
+],
 
     components: {
 
