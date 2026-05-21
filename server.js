@@ -1,6 +1,6 @@
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-const mongoSanitize = require("express-mongo-sanitize");
+
 const xss = require("xss-clean");
 const cors = require("cors");
 const express = require('express');
@@ -46,7 +46,7 @@ app.use(helmet());
 app.use(cors());
 
 // PREVENT NoSQL INJECTION
-app.use(mongoSanitize());
+
 
 // PREVENT XSS ATTACKS
 app.use(xss());
