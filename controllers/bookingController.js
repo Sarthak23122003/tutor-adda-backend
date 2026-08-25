@@ -21,6 +21,9 @@ exports.createBooking = asyncHandler(
       endTime,
       duration,
     } = req.body;
+    console.log("========== CREATE BOOKING ==========");
+console.log("Request Body:", req.body);
+console.log("Student ID:", req.user.id);
 
     // CHECK TUTOR EXISTS
     const tutorUser = await User.findById(tutorId);
@@ -43,57 +46,59 @@ exports.createBooking = asyncHandler(
     }
 
     // GET DAY NAME
-    const dayName = new Date(
-      bookingDate
-    ).toLocaleDateString(
-      "en-US",
-      { weekday: "long" }
-    );
+    //const dayName = new Date(
+      //bookingDate
+    //).toLocaleDateString(
+      //"en-US",
+      //{ weekday: "long" }
+    //);
 
     // CHECK AVAILABILITY
-    const availableSlot =
-      tutorProfile.availability.find(
-        (slot) =>
-          slot.day === dayName &&
-          startTime >= slot.startTime &&
-          endTime <= slot.endTime
-      );
+    //const availableSlot =
+      //tutorProfile.availability.find(
+        //(slot) =>
+          //slot.day === dayName &&
+          //startTime >= slot.startTime &&
+          //endTime <= slot.endTime
+      //);
 
-    if (!availableSlot) {
-      const error = new Error(
-        "Tutor not available at requested time"
-      );
-      error.statusCode = 400;
-      throw error;
-    }
+    //if (!availableSlot) {
+      //const error = new Error(
+        //"Tutor not available at requested time"
+      //);
+      //error.statusCode = 400;
+      //throw error;
+    //}
 
     // CHECK OVERLAPPING BOOKINGS
-    const existingBooking =
-      await Booking.findOne({
+    // TEMPORARILY DISABLED AVAILABILITY CHECK
 
-        tutor: tutorId,
+// const existingBooking =
+//       await Booking.findOne({
 
-        bookingDate,
+//         tutor: tutorId,
 
-        status: {
-          $in: ["pending", "accepted"]
-        },
+//         bookingDate,
 
-        $or: [
-          {
-            startTime: { $lt: endTime },
-            endTime: { $gt: startTime }
-          }
-        ]
-      });
+//         status: {
+//           $in: ["pending", "accepted"]
+//         },
 
-    if (existingBooking) {
-      const error = new Error(
-        "Time slot already booked"
-      );
-      error.statusCode = 400;
-      throw error;
-    }
+//         $or: [
+//           {
+//             startTime: { $lt: endTime },
+//             endTime: { $gt: startTime }
+//           }
+//         ]
+//       });
+
+// if (existingBooking) {
+//   const error = new Error(
+//     "Time slot already booked"
+//   );
+//   error.statusCode = 400;
+//   throw error;
+// }
 
     // CREATE BOOKING
     const booking = await Booking.create({
@@ -339,29 +344,30 @@ exports.rescheduleBooking = asyncHandler(
     }
 
     // GET DAY
-    const dayName = new Date(
-      bookingDate
-    ).toLocaleDateString(
-      "en-US",
-      { weekday: "long" }
-    );
+   // const dayName = new Date(
+     // bookingDate
+    //).toLocaleDateString(
+      //"en-US",
+      //{ weekday: "long" }
+    //);
 
     // CHECK AVAILABILITY
-    const availableSlot =
-      tutorProfile.availability.find(
-        (slot) =>
-          slot.day === dayName &&
-          startTime >= slot.startTime &&
-          endTime <= slot.endTime
-      );
+    // TEMPORARILY DISABLED AVAILABILITY CHECK
+    // const availableSlot =
+    //   tutorProfile.availability.find(
+    //     (slot) =>
+    //       slot.day === dayName &&
+    //       startTime >= slot.startTime &&
+    //       endTime <= slot.endTime
+     // );
 
-    if (!availableSlot) {
-      const error = new Error(
-        "Tutor unavailable for new slot"
-      );
-      error.statusCode = 400;
-      throw error;
-    }
+    // if (!availableSlot) {
+    //   const error = new Error(
+    //     "Tutor unavailable for new slot"
+    //   );
+    //   error.statusCode = 400;
+    //   throw error;
+    //}
 
     // CHECK CONFLICTS
     const conflictingBooking =
@@ -413,22 +419,32 @@ exports.rescheduleBooking = asyncHandler(
 // ======================================
 // STUDENT BOOKING HISTORY
 // ======================================
-exports.getStudentBookings = asyncHandler(
-  async (req, res) => {
+// ======================================
+// STUDENT BOOKING HISTORY
+// ======================================
+exports.getStudentBookings = asyncHandler(async (req, res) => {
 
-    const studentId = req.user.id;
+  console.log("\n========== STUDENT BOOKINGS ==========");
+  console.log("Logged In User:");
+  console.log(req.user);
 
-    const bookings = await Booking.find({
-      student: studentId,
-    })
-      .populate("tutor", "name email")
-      .sort({ createdAt: -1 });
+  const studentId = req.user.id;
 
-    return res.status(200).json({
-      success: true,
-      count: bookings.length,
-      bookings,
-    });
+  console.log("Student ID:", studentId);
 
-  }
-);
+  const bookings = await Booking.find({
+    student: studentId,
+  })
+    .populate("tutor", "name email")
+    .sort({ createdAt: -1 });
+
+  console.log("Bookings Found:", bookings.length);
+  console.log(bookings);
+
+  return res.status(200).json({
+    success: true,
+    count: bookings.length,
+    bookings,
+  });
+
+});

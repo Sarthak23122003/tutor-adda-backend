@@ -1,6 +1,8 @@
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 import { useState } from "react";
-import { loginUser } from "../../services/authService";
-
+import { loginUser } from "../../Services/authService";
+import { useNavigate } from "react-router-dom";
 const Login = () => {
 
   // Form State
@@ -8,7 +10,8 @@ const Login = () => {
     email: "",
     password: "",
   });
-
+const { login } = useContext(AuthContext);
+const navigate = useNavigate();
   // Loading State
   const [loading, setLoading] = useState(false);
 
@@ -38,12 +41,9 @@ const Login = () => {
       console.log(data);
 
       // Save Token
-      localStorage.setItem(
-        "token",
-        data.token
-      );
-
+      login(data.token);
       setMessage("Login Successful ✅");
+      navigate("/dashboard");
 
     } catch (error) {
 
